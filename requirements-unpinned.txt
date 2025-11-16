@@ -1,0 +1,28 @@
+# XTR-0 Hackathon Requirements (Unpinned)
+# Use this to find latest compatible versions
+# After successful installation, run: pip freeze > requirements-pinned.txt
+
+# Core THRML
+thrml
+jax
+jaxlib
+
+# Scientific computing
+numpy
+pandas
+scipy
+
+# Visualization
+matplotlib
+seaborn
+networkx
+
+# API calls
+requests
+
+# Biological knowledge bases
+indra      # INDRA biological knowledge integration
+
+# Optional utilities
+anthropic  # For LLM drug interpretation
+tqdm       # Progress bars

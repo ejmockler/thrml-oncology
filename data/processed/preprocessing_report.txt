@@ -1,0 +1,65 @@
+======================================================================
+PREPROCESSING REPORT
+======================================================================
+
+Date: 2025-11-16T15:39:57.413291
+Configuration: {
+  "num_states": 3,
+  "sensitive_percentile": 33.0,
+  "resistant_percentile": 67.0,
+  "target_drug": "Erlotinib",
+  "egfr_pathway_genes": [
+    "EGFR",
+    "KRAS",
+    "BRAF",
+    "PIK3CA",
+    "AKT1",
+    "MTOR",
+    "MAP2K1",
+    "MAPK1",
+    "SOS1",
+    "GRB2",
+    "PTEN",
+    "NF1"
+  ],
+  "min_cell_lines_per_group": 50,
+  "methylation_na_threshold": 0.5,
+  "random_seed": 42
+}
+
+Input Files:
+  Expression: data/raw/ccle/CCLE_expression_TPM.csv (543.0 MB)
+  Methylation: data/raw/ccle/CCLE_RRBS_methylation.txt (149.3 MB)
+  Model: data/raw/ccle/Model.csv (0.7 MB)
+  GDSC: data/raw/gdsc/GDSC1_fitted_dose_response.xlsx (3.4 MB)
+
+Cell Line Filtering:
+  Expression cell lines: 1754
+  Methylation cell lines: 842
+  Overlapping: 832
+  With IC50 data: 181
+
+Stratification:
+  Drug: Erlotinib
+  Sensitive threshold (p33.0): 2.331
+  Resistant threshold (p67.0): 3.037
+  Sensitive group: 60 cell lines
+  Resistant group: 60 cell lines
+
+Gene Selection:
+  EGFR pathway genes requested: 12
+  Found in expression: 12
+  With methylation: 12
+  Final gene set: 12
+  Genes: EGFR, KRAS, BRAF, PIK3CA, AKT1, MTOR, MAP2K1, MAPK1, SOS1, GRB2, PTEN, NF1
+
+Discretization:
+  Method: Tertile binning
+  States: 3 (0=low, 1=medium, 2=high)
+  Hardware mapping: 2 qubits per gene
+
+Output Files:
+  sensitive: data/processed/sensitive_discretized.pkl
+  resistant: data/processed/resistant_discretized.pkl
+
+======================================================================

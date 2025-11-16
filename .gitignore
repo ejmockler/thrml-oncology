@@ -1,0 +1,83 @@
+# =============================================================================
+# DATA FILES (Large genomics data - DO NOT COMMIT)
+# =============================================================================
+
+# Raw data directory (CCLE, GDSC downloads)
+data/raw/ccle/*.csv
+data/raw/ccle/*.txt
+data/raw/ccle/*.gz
+data/raw/gdsc/*.xlsx
+data/raw/gdsc/*.txt
+
+# Processed data (discretized pickle files)
+data/processed/*.pkl
+data/processed/*.csv
+data/processed/*.npy
+
+# Keep documentation and reports
+!data/**/*.md
+!data/**/README*
+!data/processed/preprocessing_report.txt
+
+# Download logs
+data_download.log
+preprocessing_output.log
+
+# Results and outputs
+results/
+outputs/
+figures/*.png
+figures/*.pdf
+!figures/example_*.png
+
+# Model checkpoints and caches
+*.pkl
+*.npy
+*.h5
+*.hdf5
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter
+.ipynb_checkpoints
+
+# Environment
+.env
+.venv
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep directory structure
+!.gitkeep
