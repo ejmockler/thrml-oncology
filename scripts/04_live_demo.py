@@ -128,12 +128,18 @@ def run_live_inference_demo(
     logger.info("STEP 4: Initializing thermodynamic visualizer")
     logger.info("-" * 70)
 
-    visualizer = ThermodynamicVisualizer(output_dir=str(output_path))
+    visualizer = ThermodynamicVisualizer()
 
     # Create energy landscape visualizations
     logger.info("Creating energy landscape visualizations...")
-    visualizer.visualize_energy_landscape(model, gene1, gene2, direction='forward')
-    visualizer.visualize_energy_landscape(model, gene1, gene2, direction='backward')
+    visualizer.visualize_energy_landscape(
+        model, gene1, gene2, direction='forward',
+        output_path=str(output_path / 'energy_landscape_forward.png')
+    )
+    visualizer.visualize_energy_landscape(
+        model, gene1, gene2, direction='backward',
+        output_path=str(output_path / 'energy_landscape_backward.png')
+    )
     logger.info(f"  ✓ Saved energy landscapes to {output_path}")
     logger.info("")
 
@@ -205,10 +211,14 @@ def run_live_inference_demo(
     logger.info("STEP 6: Visualizing sampling dynamics")
     logger.info("-" * 70)
 
-    visualizer.visualize_sampling_dynamics(samples_fwd, gene1, gene2,
-                                          model_type='forward')
-    visualizer.visualize_sampling_dynamics(samples_bwd, gene1, gene2,
-                                          model_type='backward')
+    visualizer.visualize_sampling_dynamics(
+        samples_fwd, gene1, gene2,
+        output_path=str(output_path / 'sampling_dynamics_forward.png')
+    )
+    visualizer.visualize_sampling_dynamics(
+        samples_bwd, gene1, gene2,
+        output_path=str(output_path / 'sampling_dynamics_backward.png')
+    )
     logger.info(f"  ✓ Saved sampling trajectories to {output_path}")
     logger.info("")
 
