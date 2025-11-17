@@ -68,6 +68,19 @@ wheels/
 env/
 venv/
 
+# SSH Keys (CRITICAL - DO NOT COMMIT)
+*.pem
+*.key
+*_rsa
+*_rsa.pub
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+thrml-hack-*
+*.ppk
+known_hosts
+
 # IDE
 .vscode/
 .idea/
