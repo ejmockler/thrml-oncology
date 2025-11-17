@@ -1,87 +1,261 @@
 # Documentation Index
 
-**XTR-0 Hackathon: Thermodynamic Causal Inference for Drug Response Prediction**
+**Thermodynamic Causal Inference for Cancer Drug Resistance**
 
-This is your navigation hub for all project documentation. Documents are organized by purpose and reading order.
+Navigation hub for production-grade documentation.
 
 ---
 
-## 🎯 Engineering Philosophy (READ FIRST)
+## 🎯 Engineering Philosophy
 
-### 0. [ENGINEERING_PHILOSOPHY.md](ENGINEERING_PHILOSOPHY.md) ⭐ **FOUNDATIONAL**
-**What it is**: Production device engineering philosophy vs academic prototype
-**Read this if**: You're about to write any code for this project
-**Reading time**: 20 minutes
+### [ENGINEERING_PHILOSOPHY.md](ENGINEERING_PHILOSOPHY.md) ⭐
+**Purpose**: Production device standards vs academic prototypes
 **Core principles**:
-- **Physics, not statistics**: Thermodynamic truth vs p-values
-- **Hardware-aware**: TSU simulation → future ASIC deployment
-- **Deterministic**: Bit-exact reproducibility for medical devices
-- **Fail-fast**: Invalid states impossible, not just unlikely
-- **Auditable**: Clinical-grade provenance and error handling
+- Physics-based thermodynamic inference (not statistical correlation)
+- Hardware-aware design for TSU deployment
+- Deterministic, bit-exact reproducibility
+- Fail-fast validation, auditable provenance
 
-**Why read this first**: Sets architectural philosophy that governs all implementation decisions. Distinguishes this from bioinformatics cruft.
-
-**Next**: → [QUICK_START.md](#quick_startmd) to apply these principles
+**Read first** - Sets architectural philosophy for all implementation.
 
 ---
 
-## 🚀 Start Here (New to This Project)
+## 🚀 Quickstart
 
-### 1. [README.md](README.md)
-**What it is**: Original hackathon brief and project overview
-**Read this if**: You want to understand the high-level goal
-**Reading time**: 5 minutes
-**Next**: → [QUICK_START.md](#quick_startmd)
+### [QUICKSTART.md](QUICKSTART.md)
+**Purpose**: Production pipeline from data → validated predictions
+**Contents**:
+- 30-second setup
+- Data acquisition guide
+- Production pipeline (preprocessing complete ✅)
+- Implementation roadmap (THRML model, inference, validation)
+- Verification checklist
 
-### 2. [QUICK_START.md](QUICK_START.md)
-**What it is**: Immediate action items and implementation roadmap
-**Read this if**: You're ready to start working NOW
-**Reading time**: 10 minutes
-**Key sections**:
-- What you need to do immediately (data download)
-- File organization
-- Implementation priority order
-- Timeline estimates
+**Read second** - Immediate action items and current status.
 
-**Next**: → [RIGOROUS_METHODOLOGY.md](#rigorous_methodologymd) (Sections 1-2)
-
----
-
-## 📊 Data Acquisition
-
-### 3. [DATA_DOWNLOAD_SUMMARY.md](data/DATA_DOWNLOAD_SUMMARY.md)
-**What it is**: Complete guide to obtaining all required datasets
-**Read this if**: Downloads failed, or you need alternative sources
-**Reading time**: 15 minutes
-**Key sections**:
-- Authoritative data sources (DepMap, GDSC)
-- Direct download URLs and API endpoints
-- File format specifications
+### [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)
+**Purpose**: Python environment configuration
+**Contents**:
+- Virtual environment setup
+- THRML v0.1.3 installation
+- GPU configuration (CUDA/Metal)
 - Troubleshooting guide
 
-**Related**: → [data/DATA_SOURCES.md](data/DATA_SOURCES.md) (citations and provenance)
+---
 
-### 4. [scripts/01_download_data.sh](scripts/01_download_data.sh)
-**What it is**: Automated download script
-**Use this**: To download GDSC data (CCLE requires manual download)
-**Run time**: 5-30 minutes depending on connection
+## 📚 Core Methodology
 
-**Status Check**:
-```bash
-bash scripts/01_download_data.sh
-# Or check: data_download.log
+### [RIGOROUS_METHODOLOGY.md](RIGOROUS_METHODOLOGY.md) ⭐
+**Purpose**: Complete methodology documentation
+**Sections**:
+1. Data preprocessing (✅ implemented)
+2. THRML model construction (🚧 in progress)
+3. Causal inference via free energy
+4. Physics-based validation
+5. Pipeline execution
+
+**Primary reference** - Read sections as you implement each component.
+
+---
+
+## 📊 Data Documentation
+
+### [data/README.md](data/README.md)
+**Purpose**: Data overview and current inventory
+**Status**: Expression, methylation, Model.csv, GDSC IC50 data acquired
+
+### [data/DATA_SOURCES.md](data/DATA_SOURCES.md)
+**Purpose**: Data provenance, citations, licenses
+**Contents**: DepMap/CCLE and GDSC attributions
+
+### [data/VERSION_COMPATIBILITY_ANALYSIS.md](data/VERSION_COMPATIBILITY_ANALYSIS.md)
+**Purpose**: How we align 2018 methylation with 2025 expression data
+**Key insight**: Model.csv provides the mapping (98.7% overlap achieved)
+
+### [data/DATA_INVENTORY.md](data/DATA_INVENTORY.md)
+**Purpose**: Current data status and file sizes
+**Use**: Verify downloads complete
+
+### [data/READY_TO_PROCEED.md](data/READY_TO_PROCEED.md)
+**Purpose**: Data acquisition completion checklist
+
+---
+
+## 🧬 Implementation Modules
+
+### [core/DATA_LOADER_README.md](core/DATA_LOADER_README.md)
+**Purpose**: Data preprocessing technical documentation
+**Status**: ✅ Complete (production-grade, 820 lines)
+**Contents**:
+- CCLE/GDSC data loading
+- IC50 stratification (p33/p67)
+- EGFR pathway gene extraction (12 genes)
+- Tertile discretization
+- SHA-256 provenance tracking
+
+### [core/DATA_LOADER_QUICK_REFERENCE.md](core/DATA_LOADER_QUICK_REFERENCE.md)
+**Purpose**: Quick lookup for preprocessing functions
+
+### [core/VALIDATION_README.md](core/VALIDATION_README.md)
+**Purpose**: Physics-based validation specification
+**Status**: 🚧 To implement
+**Contents**:
+- Detailed balance verification
+- Ergodicity checks
+- Free energy convergence
+- IC50 validation metrics
+
+### [docs/INFERENCE_API.md](docs/INFERENCE_API.md)
+**Purpose**: Causal inference interface specification
+**Status**: 🚧 To implement
+
+### [docs/INFERENCE_QUICKSTART.md](docs/INFERENCE_QUICKSTART.md)
+**Purpose**: Inference quick reference
+
+---
+
+## 🔬 THRML Reference
+
+### [THRML_COMPREHENSIVE_DOCUMENTATION.md](THRML_COMPREHENSIVE_DOCUMENTATION.md)
+**Purpose**: Complete THRML v0.1.3 reference
+**Contents**:
+- Hardware primitives (pbit, pdit, TSU architecture)
+- Mathematical formalisms (EBMs, Gibbs sampling)
+- Software API (Nodes, Blocks, Factors, Samplers)
+- Usage patterns and examples
+
+### [THRML_API_VERIFIED.md](THRML_API_VERIFIED.md) ⭐
+**Purpose**: Verified API patterns against installed v0.1.3 package
+**Critical for**: Implementing `core/thrml_model.py`
+**Contents**:
+- Correct signatures (CategoricalEBMFactor, sample_states, etc.)
+- Working code patterns
+- Key gotchas and fixes
+
+---
+
+## 📁 File Structure
+
+```
+thrml-cancer-decision-support/
+├── README.md                              # Project overview
+├── QUICKSTART.md                          # Start here
+├── ENGINEERING_PHILOSOPHY.md              # Code standards
+├── RIGOROUS_METHODOLOGY.md                # Complete methodology
+├── ENVIRONMENT_SETUP.md                   # Setup guide
+├── DOCUMENTATION_INDEX.md                 # This file
+│
+├── data/
+│   ├── raw/ccle/                          # CCLE data
+│   ├── raw/gdsc/                          # GDSC data
+│   ├── processed/                         # Preprocessed .pkl files ✅
+│   ├── README.md                          # Data overview
+│   ├── DATA_SOURCES.md                    # Citations
+│   ├── DATA_INVENTORY.md                  # File inventory
+│   ├── VERSION_COMPATIBILITY_ANALYSIS.md  # 2018 vs 2025 alignment
+│   └── READY_TO_PROCEED.md                # Completion checklist
+│
+├── core/
+│   ├── data_loader.py                     # ✅ Production preprocessing
+│   ├── DATA_LOADER_README.md              # Technical docs
+│   ├── DATA_LOADER_QUICK_REFERENCE.md     # Quick lookup
+│   ├── thrml_model.py                     # 🚧 THRML model
+│   ├── inference.py                       # 🚧 Causal inference
+│   ├── validation.py                      # 🚧 Validation
+│   └── VALIDATION_README.md               # Validation spec
+│
+├── docs/
+│   ├── INFERENCE_API.md                   # Inference interface
+│   └── INFERENCE_QUICKSTART.md            # Inference guide
+│
+├── THRML_COMPREHENSIVE_DOCUMENTATION.md   # THRML deep dive
+├── THRML_API_VERIFIED.md                  # Verified v0.1.3 patterns
+│
+└── scripts/
+    ├── 01_download_data.sh                # Data download
+    └── 02_run_inference.py                # 🚧 Main pipeline
 ```
 
 ---
 
-## 🔬 Methodology (The Core Documentation)
+## 🗺️ Navigation by Task
 
-### 5. [RIGOROUS_METHODOLOGY.md](RIGOROUS_METHODOLOGY.md) ⭐ PRIMARY REFERENCE
-**What it is**: Complete methodology from data → validated predictions
-**Read this if**: You're implementing the pipeline
-**Reading time**: 2 hours (or read sections as needed)
+**I want to understand the project**:
+→ Start: [README.md](README.md)
+→ Then: [QUICKSTART.md](QUICKSTART.md)
 
-**Table of Contents**:
+**I want to set up the environment**:
+→ [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)
+→ Verify: `python3 -c "import thrml; print(thrml.__version__)"`
+
+**I want to get data**:
+→ [QUICKSTART.md](QUICKSTART.md) - Data Acquisition section
+→ [data/DATA_INVENTORY.md](data/DATA_INVENTORY.md)
+
+**I want to run preprocessing**:
+→ [core/DATA_LOADER_README.md](core/DATA_LOADER_README.md)
+→ Run: `python3 core/data_loader.py --help`
+
+**I want to build the THRML model**:
+→ [THRML_API_VERIFIED.md](THRML_API_VERIFIED.md) (verified patterns)
+→ [RIGOROUS_METHODOLOGY.md](RIGOROUS_METHODOLOGY.md) § 2
+
+**I want to implement inference**:
+→ [docs/INFERENCE_API.md](docs/INFERENCE_API.md)
+→ [RIGOROUS_METHODOLOGY.md](RIGOROUS_METHODOLOGY.md) § 3
+
+**I want to validate predictions**:
+→ [core/VALIDATION_README.md](core/VALIDATION_README.md)
+→ [RIGOROUS_METHODOLOGY.md](RIGOROUS_METHODOLOGY.md) § 4
+
+---
+
+## ✅ Documentation Status
+
+**Core Pillars** (4 files):
+- ✅ README.md
+- ✅ QUICKSTART.md
+- ✅ ENGINEERING_PHILOSOPHY.md
+- ✅ RIGOROUS_METHODOLOGY.md
+- ✅ ENVIRONMENT_SETUP.md
+- ✅ DOCUMENTATION_INDEX.md (this file)
+
+**THRML Reference** (2 files):
+- ✅ THRML_COMPREHENSIVE_DOCUMENTATION.md (verified accurate)
+- ✅ THRML_API_VERIFIED.md (verified against v0.1.3)
+
+**Module Documentation** (5 files):
+- ✅ core/DATA_LOADER_README.md
+- ✅ core/DATA_LOADER_QUICK_REFERENCE.md
+- ✅ core/VALIDATION_README.md
+- ✅ docs/INFERENCE_API.md
+- ✅ docs/INFERENCE_QUICKSTART.md
+
+**Data Documentation** (6 files):
+- ✅ data/README.md
+- ✅ data/DATA_SOURCES.md
+- ✅ data/DATA_INVENTORY.md
+- ✅ data/VERSION_COMPATIBILITY_ANALYSIS.md
+- ✅ data/READY_TO_PROCEED.md
+- ✅ data/processed/preprocessing_report.txt
+
+**Total**: 23 production-quality documentation files
+
+---
+
+## 🔄 Last Updated
+
+**Date**: 2025-11-16
+**Status**: Documentation cleanup complete
+**Changes**:
+- Removed 20 development/build artifact files
+- Consolidated 3 guides into QUICKSTART.md
+- Verified THRML documentation against v0.1.3
+- Streamlined navigation
+
+---
+
+**Ready to implement** → [QUICKSTART.md](QUICKSTART.md)
 
 #### Section 1: Data Preprocessing Pipeline (Lines 1-400)
 - Input data specifications

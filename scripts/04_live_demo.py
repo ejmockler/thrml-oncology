@@ -150,17 +150,26 @@ def run_live_inference_demo(
     logger.info(f"Sampling FORWARD model ({n_samples} samples)...")
     start_time = time.time()
 
-    samples_fwd, energies_fwd = model.sample_model(
+    # THRML 0.1.3: sample_from_model returns samples only (not energies)
+    samples_fwd = model.sample_from_model(
         factors_fwd,
         blocks_fwd,
-        meth_data,
-        expr_data,
         n_samples=n_samples,
         n_warmup=n_warmup
     )
 
     time_fwd = time.time() - start_time
     logger.info(f"  ✓ Generated {len(samples_fwd)} samples in {time_fwd:.2f}s")
+
+    # Compute energies separately for each sample
+    logger.info("  Computing energies for forward samples...")
+    energies_fwd = []
+    for sample in samples_fwd:
+        state_dict = model._sample_to_state(sample, gene1, gene2)
+        energy = model.compute_energy(gene1, gene2, 'forward', state_dict)
+        energies_fwd.append(energy)
+    energies_fwd = np.array(energies_fwd)
+
     logger.info(f"  ✓ Mean energy: {np.mean(energies_fwd):.2f}")
     logger.info(f"  ✓ Energy std: {np.std(energies_fwd):.2f}")
 
@@ -168,17 +177,26 @@ def run_live_inference_demo(
     logger.info(f"Sampling BACKWARD model ({n_samples} samples)...")
     start_time = time.time()
 
-    samples_bwd, energies_bwd = model.sample_model(
+    # THRML 0.1.3: sample_from_model returns samples only (not energies)
+    samples_bwd = model.sample_from_model(
         factors_bwd,
         blocks_bwd,
-        meth_data,
-        expr_data,
         n_samples=n_samples,
         n_warmup=n_warmup
     )
 
     time_bwd = time.time() - start_time
     logger.info(f"  ✓ Generated {len(samples_bwd)} samples in {time_bwd:.2f}s")
+
+    # Compute energies separately for each sample
+    logger.info("  Computing energies for backward samples...")
+    energies_bwd = []
+    for sample in samples_bwd:
+        state_dict = model._sample_to_state(sample, gene1, gene2)
+        energy = model.compute_energy(gene1, gene2, 'backward', state_dict)
+        energies_bwd.append(energy)
+    energies_bwd = np.array(energies_bwd)
+
     logger.info(f"  ✓ Mean energy: {np.mean(energies_bwd):.2f}")
     logger.info(f"  ✓ Energy std: {np.std(energies_bwd):.2f}")
     logger.info("")

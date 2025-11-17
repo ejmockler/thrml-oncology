@@ -415,6 +415,148 @@ def discretize_tertiles(continuous_values: np.ndarray) -> tuple[np.ndarray, tupl
     return discrete, (t1, t2)
 
 
+def generate_synthetic_data(
+    genes: list[str],
+    n_sensitive: int = 25,
+    n_resistant: int = 25,
+    seed: int = 42
+) -> dict:
+    """
+    Generate synthetic methylation/expression data for demos and testing.
+
+    Creates biologically-inspired data with known causal structure:
+    - Sensitive cells: EGFR methylation -> low EGFR expression
+    - Resistant cells: bypass pathway activation
+
+    Args:
+        genes: Gene symbols to simulate
+        n_sensitive: Number of therapy-sensitive cell lines
+        n_resistant: Number of therapy-resistant cell lines
+        seed: Random seed for reproducibility
+
+    Returns:
+        dict with 'methylation', 'expression', 'cell_lines',
+        'sensitive_idx', 'resistant_idx', 'ground_truth'
+    """
+    np.random.seed(seed)
+
+    n_total = n_sensitive + n_resistant
+    n_genes = len(genes)
+
+    # Initialize
+    methylation = np.zeros((n_total, n_genes))
+    expression = np.zeros((n_total, n_genes))
+    cell_lines = [f"CELL_{i:03d}" for i in range(n_total)]
+    sensitive_idx = list(range(n_sensitive))
+    resistant_idx = list(range(n_sensitive, n_total))
+
+    # Generate data for each gene
+    for g_idx, gene in enumerate(genes):
+        if g_idx == 0:  # Primary target (e.g., EGFR)
+            # Sensitive: high methylation -> low expression
+            methylation[sensitive_idx, g_idx] = np.random.beta(5, 2, n_sensitive) * 0.8 + 0.2
+            expression[sensitive_idx, g_idx] = (
+                -0.8 * methylation[sensitive_idx, g_idx] +
+                np.random.normal(0, 0.15, n_sensitive) + 1.0
+            )
+
+            # Resistant: low methylation -> high expression
+            methylation[resistant_idx, g_idx] = np.random.beta(2, 5, n_resistant) * 0.6
+            expression[resistant_idx, g_idx] = (
+                -0.5 * methylation[resistant_idx, g_idx] +
+                np.random.normal(0, 0.15, n_resistant) + 1.5
+            )
+        else:
+            # Other genes: moderate correlation
+            methylation[:, g_idx] = np.random.beta(3, 3, n_total) * 0.7 + 0.15
+            expression[:, g_idx] = (
+                -0.4 * methylation[:, g_idx] +
+                np.random.normal(0.5, 0.3, n_total)
+            )
+
+    # Normalize expression to log2 scale
+    expression = (expression - expression.mean()) / expression.std() * 1.5 + 0.5
+    methylation = np.clip(methylation, 0, 1)
+
+    # Create DataFrames
+    meth_df = pd.DataFrame(methylation, columns=genes, index=cell_lines)
+    expr_df = pd.DataFrame(expression, columns=genes, index=cell_lines)
+
+    return {
+        'methylation': meth_df,
+        'expression': expr_df,
+        'cell_lines': cell_lines,
+        'sensitive_idx': sensitive_idx,
+        'resistant_idx': resistant_idx,
+        'ground_truth': {}
+    }
+
+
+def prepare_model_input(
+    data: dict,
+    genes: list[str] | None = None,
+    discretize: bool = True,
+    n_bins: int = 3
+) -> dict:
+    """
+    Prepare data for GeneNetworkModel inference.
+
+    Converts continuous data to discretized format for THRML.
+
+    Args:
+        data: Dict from generate_synthetic_data() or similar
+        genes: Optional subset of genes (default: all)
+        discretize: Whether to discretize values (default: True)
+        n_bins: Number of bins for discretization (default: 3)
+
+    Returns:
+        dict with 'methylation_discrete', 'expression_discrete',
+        'methylation_continuous', 'expression_continuous',
+        'cell_lines', 'sensitive_idx', 'resistant_idx'
+    """
+    # Filter genes if specified
+    if genes is not None:
+        available = set(data['methylation'].columns)
+        genes = [g for g in genes if g in available]
+        if not genes:
+            raise ValueError("None of the specified genes found in data")
+        meth_df = data['methylation'][genes]
+        expr_df = data['expression'][genes]
+    else:
+        meth_df = data['methylation']
+        expr_df = data['expression']
+
+    # Discretize if requested
+    if discretize:
+        # Use quantile-based binning
+        meth_discrete = pd.DataFrame(index=meth_df.index, columns=meth_df.columns)
+        expr_discrete = pd.DataFrame(index=expr_df.index, columns=expr_df.columns)
+
+        for col in meth_df.columns:
+            bins, _ = discretize_tertiles(meth_df[col].values)
+            meth_discrete[col] = bins
+
+        for col in expr_df.columns:
+            bins, _ = discretize_tertiles(expr_df[col].values)
+            expr_discrete[col] = bins
+
+        meth_discrete = meth_discrete.astype(int)
+        expr_discrete = expr_discrete.astype(int)
+    else:
+        meth_discrete = meth_df
+        expr_discrete = expr_df
+
+    return {
+        'methylation_discrete': meth_discrete,
+        'expression_discrete': expr_discrete,
+        'methylation_continuous': meth_df,
+        'expression_continuous': expr_df,
+        'cell_lines': data['cell_lines'],
+        'sensitive_idx': data['sensitive_idx'],
+        'resistant_idx': data['resistant_idx']
+    }
+
+
 def preprocess_complete_pipeline(
     expression_path: Path,
     methylation_path: Path,

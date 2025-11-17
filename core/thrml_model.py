@@ -131,9 +131,10 @@ class GeneNetworkModel:
         )
 
         # Factor 2: E1 -> E2 (inter-gene expression regulation)
-        # Get INDRA prior strength
+        # Get INDRA prior strength (extract belief score from dict)
         prior_key = (gene1, gene2)
-        prior_strength = self.prior_network.get(prior_key, 0.5)
+        prior_info = self.prior_network.get(prior_key, {'belief': 0.5})
+        prior_strength = prior_info['belief'] if isinstance(prior_info, dict) else prior_info
 
         # Concordance matrix: activation relationship
         # (assumes activation; could be made more sophisticated)
@@ -213,7 +214,8 @@ class GeneNetworkModel:
 
         # Factor 2: E2 -> E1 (REVERSED direction)
         prior_key = (gene2, gene1)  # NOTE: reversed
-        prior_strength = self.prior_network.get(prior_key, 0.5)
+        prior_info = self.prior_network.get(prior_key, {'belief': 0.5})
+        prior_strength = prior_info['belief'] if isinstance(prior_info, dict) else prior_info
 
         W_e2_e1 = prior_strength * jnp.array([[
             [-1.0, -0.5,  0.0],
@@ -257,7 +259,7 @@ class GeneNetworkModel:
             direction: 'forward' or 'backward'
 
         Returns:
-            Dict with 'factors', 'blocks', 'block_spec'
+            Dict with 'factors', 'blocks'
         """
         cache_key = (gene1, gene2, direction)
 
@@ -267,13 +269,9 @@ class GeneNetworkModel:
             else:
                 factors, blocks = self.build_model_backward(gene1, gene2)
 
-            # Create BlockSpec
-            block_spec = BlockSpec(blocks)
-
             self._model_cache[cache_key] = {
                 'factors': factors,
-                'blocks': blocks,
-                'block_spec': block_spec
+                'blocks': blocks
             }
 
         return self._model_cache[cache_key]
@@ -286,6 +284,11 @@ class GeneNetworkModel:
         """
         Compute total energy for a given state.
 
+        Uses THRML 0.1.3 pattern:
+        1. Convert state_dict to block state arrays
+        2. Use block_state_to_global() from thrml.block_management
+        3. Sum factor energies with factor.energy(global_state, gibbs_spec)
+
         Args:
             gene1, gene2: Gene symbols
             direction: 'forward' or 'backward'
@@ -295,35 +298,41 @@ class GeneNetworkModel:
         Returns:
             Total energy value
         """
+        from thrml.block_management import block_state_to_global
+
         # Get cached model components
         model = self._get_cached_model(gene1, gene2, direction)
         factors = model['factors']
         blocks = model['blocks']
-        block_spec = model['block_spec']
 
-        # Convert state_dict to block_state
+        # Convert state_dict to block state arrays
         meth_values = jnp.array([
             state_dict.get(f'{gene1}_meth', 0),
             state_dict.get(f'{gene2}_meth', 0)
-        ])
+        ], dtype=jnp.uint8)
 
         expr_values = jnp.array([
             state_dict.get(f'{gene1}_expr', 0),
             state_dict.get(f'{gene2}_expr', 0)
-        ])
+        ], dtype=jnp.uint8)
 
-        block_state = {
-            blocks[0]: meth_values,  # Methylation block
-            blocks[1]: expr_values   # Expression block
-        }
+        # Create BlockGibbsSpec for energy computation
+        gibbs_spec = BlockGibbsSpec(
+            free_super_blocks=blocks,
+            clamped_blocks=[]
+        )
 
-        # Convert to global state
-        global_state = block_spec.block_state_to_global(block_state)
+        # Convert to global state using block_state_to_global
+        # Takes list of block states in order of free_super_blocks
+        global_state = block_state_to_global(
+            [meth_values, expr_values],
+            gibbs_spec
+        )
 
         # Sum energies from all factors
         total_energy = 0.0
         for factor in factors:
-            total_energy += factor.energy(global_state, block_spec)
+            total_energy += factor.energy(global_state, gibbs_spec)
 
         return float(total_energy)
     
